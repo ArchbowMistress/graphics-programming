@@ -1,3 +1,9 @@
+console.log("importing these three things was more timeconsuming and sanity sucking than the actual looping stars assignment help");
+
+import * as THREE from "../js/three.module2.js";
+  import { TextGeometry } from "../js/TextGeometry.js";
+  import { FontLoader } from "../js/FontLoader.js";
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
   75,
@@ -8,8 +14,8 @@ const camera = new THREE.PerspectiveCamera(
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
-let cubeMesh = new THREE.Mesh();
-let stars, starGeo;
+let textMesh = new THREE.Mesh();
+let stars, stars2, starGeo;
 
 lighting();
 cube();
@@ -35,26 +41,64 @@ function particles() {
     size: 0.7,
     map: sprite,
   });
+  let starMaterial2 = new THREE.PointsMaterial({
+    color: 0xebb434,
+    size: 0.7,
+    map: sprite,
+  });
 
   stars = new THREE.Points(starGeo, starMaterial);
   scene.add(stars);
+  //Add another instance of stars, that starts in a higher position
+  stars2 = new THREE.Points(starGeo, starMaterial2);
+  scene.add(stars2);
+  stars2.position.y = 500;
 }
 
 function animateParticles() {
+    //star pattern randomization toggle
     starGeo.verticesNeedUpdate = true;
-    stars.position.y -= 0.9;
+
+
+    stars.position.y -= 1;
+    stars2.position.y -= 1;
+
+    //Reset the position back on top
+    if(stars.position.y < -500)
+    {
+      stars.position.y = 500;
+
+    }//Both instances of stars take turns
+    if (stars2.position.y < -500)
+    {
+      stars2.position.y = 500;
+    }
+    // console.log(stars.position.y);
+    // console.log(stars2.position.y);
   }
 
 function cube() {
-  const texture = new THREE.TextureLoader().load("assets/textures/wooden.jpg");
-  const cubeMaterial = new THREE.MeshBasicMaterial({ map: texture });
-  const cubeGeometry = new THREE.BoxGeometry(10, 5, 5, 5);
-  cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial);
+  //my name
+  let text = "JHONNA";
 
-  cubeMesh.position.z = -5;
-  camera.position.z = 15;
+  //load funnie font
+  const loader = new FontLoader();
+  loader.load('./assets/fonts/Playwrite DE SAS_Regular.json', function ( font ) {
 
-  scene.add(cubeMesh);
+	const titleGeometry = new TextGeometry( text, {
+    font: font,
+    size: 5,
+    depth: 3
+    } );
+  const textMaterial = new THREE.MeshBasicMaterial({color: 0xebb434});
+  textMesh = new THREE.Mesh(titleGeometry, textMaterial);
+  
+  titleGeometry.center();
+  scene.add(textMesh);
+} );
+
+  camera.position.z = 35;
+
 }
 
 function lighting() {
@@ -76,9 +120,8 @@ function animate() {
   requestAnimationFrame(animate);
 
   animateParticles();
-
-  cubeMesh.rotation.x += 0.008;
-  cubeMesh.rotation.y += 0.008;
+  
+  textMesh.rotation.y += 0.02;
   renderer.render(scene, camera);
 }
 
