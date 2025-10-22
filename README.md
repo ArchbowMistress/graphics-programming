@@ -1,1 +1,1 @@
-# graphics-programming
+# M2 LA2 - ELMAN
